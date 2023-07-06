@@ -1,4 +1,4 @@
-Pan-EU Landmask scripts
+Pan-EU Landmask
 ------------
 
 In this folder, there are 3 jupyter notebook, which were used to generate 3 corresponding Pan EU landmasks:
