@@ -9,7 +9,7 @@ Time-series of Landsat-based spectral indices for continental Europe for 2000--2
 
 This data cube could serve not only for direct monitoring, analysis, and verification of specific aspects of soil health but also as important input for modeling and mapping soil properties
 
-Preliminary maps of annual indices in year 2022 and long-term trend maps are available at [Zenodo](https://doi.org/10.5281/zenodo.10776891). All the maps are aligned with the standard spatial/temporal resolution and sizes indicated/recomended by AI4SoilHealth project, Work Package - 5.
+Preliminary maps of annual indices and long-term trend maps are available at [Zenodo](https://doi.org/10.5281/zenodo.10776891). All the maps are aligned with the standard spatial/temporal resolution and sizes indicated/recomended by AI4SoilHealth project, Work Package - 5.
 
 ## Summary
 This folder provides 
