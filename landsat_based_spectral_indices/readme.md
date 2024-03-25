@@ -25,7 +25,7 @@ General steps of maps production are:
 The production of these land masks are funded by [AI4SoilHealth](https://cordis.europa.eu/project/id/101086179). These land masks are created as a reference of the data cubes that will be produced within the frame of [AI4SoilHealth](https://cordis.europa.eu/project/id/101086179).
 
 ## Disclaimer
-If you spot any problems in the maps, or see any possible improvements in them, or see any potential collaborations, or etc..., just raise an issue or send us emails! We appreciate any feedbacks/helps that could refine them.
+If you spot any problems in the maps, or see any possible improvements in them, or see any potential collaborations, or etc..., just raise an issue [here](https://github.com/AI4SoilHealth/SoilHealthDataCube/issues) or send us emails! We appreciate any feedbacks/helps that could refine them.
 
 ## Contacts
 
