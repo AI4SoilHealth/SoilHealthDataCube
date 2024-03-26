@@ -2,7 +2,7 @@
 
 Time-series of Landsat-based spectral indices for continental Europe for 2000--2022 to support soil health monitoring. This data cube is available at 30~m resolution, with bimonthly, annual and long-term analyzes throughout continental Europe, including Ukraine, the UK, and Turkey, covering 2000 to 2022. Focus was on indices of importance for monitoring soil health: 
 - **Vegetation index**: Normalized Difference Vegetation Index (NDVI), Soil Adjusted Vegetation Index (SAVI), and Fraction of Absorbed Photosynthetically Active Radiation (FAPAR).
-- **Soil exposure**: Bare Soil Index (BSI) and Bare Soil Fraction (BSF).
+- **Soil exposure**: Bare Soil Fraction (BSF).
 - **Tillage and soil sealing**: Normalized Difference Tillage Index (NDTI) and minimum Normalized Difference Tillage Index (minNDTI).
 - **Crop patterns**: Number of Seasons (NOS) and Crop Duration Ratio (CDR).
 - **Water dynamics**: Normalized Difference Snow Index (NDSI) and Normalized Difference Water Index (NDWI)
@@ -25,10 +25,10 @@ General steps of maps production are:
 The production of these land masks are funded by [AI4SoilHealth](https://cordis.europa.eu/project/id/101086179). These land masks are created as a reference of the data cubes that will be produced within the frame of [AI4SoilHealth](https://cordis.europa.eu/project/id/101086179).
 
 ## Disclaimer
-If you spot any problems in the maps, or see any possible improvements in them, or see any potential collaborations, or etc..., just raise an issue [here](https://github.com/AI4SoilHealth/SoilHealthDataCube/issues) or send us emails! We appreciate any feedbacks/helps that could refine them.
+Funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Commision. Neither the European Union nor the granting authority can be held responsible for them. The data is provided “as is”. AI4SoilHealth project consortium and its suppliers and licensors hereby disclaim all warranties of any kind, express or implied, including, without limitation, the warranties of merchantability, fitness for a particular purpose and non-infringement. Neither AI4SoilHealth Consortium nor its suppliers and licensors, makes any warranty that the Website will be error free or that access thereto will be continuous or uninterrupted. You understand that you download from, or otherwise obtain content or services through, the Website at your own discretion and risk. 
 
 ## Contacts
 
-These maps are created by [Xuemeng](xuemeng.tian@opengeohub.org), [Davide](davide.consoli@opengeohub.org), [Leandro](leandro.parente@opengeohub.org), and [Yu-Feng](yu-feng.ho@opengeohub.org) from [OpenGeoHub](https://opengeohub.org/).
+These maps are created by [Xuemeng](xuemeng.tian@opengeohub.org), [Davide](davide.consoli@opengeohub.org), [Leandro](leandro.parente@opengeohub.org), and [Yu-Feng](yu-feng.ho@opengeohub.org) from [OpenGeoHub](https://opengeohub.org/). If you spot any problems in the maps, or see any possible improvements in them, or see any potential collaborations, or etc..., just raise an issue [here](https://github.com/AI4SoilHealth/SoilHealthDataCube/issues) or send us emails! We appreciate any feedbacks/helps that could refine them.
  
 
