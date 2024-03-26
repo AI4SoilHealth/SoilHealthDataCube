@@ -24,9 +24,10 @@ General steps of maps production are:
 
 ![00_general_workflow drawio](https://github.com/AI4SoilHealth/SoilHealthDataCube/assets/96083275/b8ce7d5e-4e2a-4695-83be-f809eb95d80b)
 
-A preview of the BSF time series for Europe from 2000 to 2022:
+A preview of the BSF (%) time series for Europe from 2000 to 2022:
 
-![global_view](https://github.com/AI4SoilHealth/SoilHealthDataCube/assets/96083275/03149af4-b60e-4daf-b6a2-fe4a11628bc4)
+![global_view4](https://github.com/AI4SoilHealth/SoilHealthDataCube/assets/96083275/1b14d38b-30d9-42c8-9b03-d257576cdb43)
+
 
 
 ## Access to the data cube
