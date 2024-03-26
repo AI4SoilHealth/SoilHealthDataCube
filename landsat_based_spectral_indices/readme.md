@@ -2,6 +2,8 @@
 
 To support soil health monitoring, this data cube offers a time-series of Landsat-based spectral indices maps across continental Europe—including Ukraine, the UK, and Turkey—from 2000 to 2022. At a resolution of 30 meters, it includes bi-monthly, annual, and long-term analyses, focusing on key aspects of soil health such as vegetation cover, soil exposure, tillage practices, and crop intensity. Apart from direct monitoring, analysis, and verification of specific aspects of soil health, this data cube also provides important input for modeling and mapping soil properties. All the maps are aligned with the standard spatial/temporal resolution and sizes indicated/recomended by AI4SoilHealth project, Work Package - 5.
 
+All the data within this folder is licensed under CC-BY-SA, and the code is licensed under the MIT License.
+
 Please cite as:
 
 - Tian, X., Consoli, D., Schneider, F., Hengl, T., Parente, L., Şahin, M., Minařík, R., Ho, Y., (2024?) "Time-series of Landsat-based spectral indices for continental Europe for 2000–2022 to support soil health monitoring", submitted to [PeerJ], preprint available at: [to be filled].
@@ -17,7 +19,7 @@ The indices include:
 - **Tillage and soil sealing**: Normalized Difference Tillage Index (NDTI) and minimum Normalized Difference Tillage Index (minNDTI).
 - **Crop patterns**: Number of Seasons (NOS) and Crop Duration Ratio (CDR).
 - **Water dynamics**: Normalized Difference Snow Index (NDSI) and Normalized Difference Water Index (NDWI)
-
+  
 General steps of maps production are:
 
 ![00_general_workflow drawio](https://github.com/AI4SoilHealth/SoilHealthDataCube/assets/96083275/b8ce7d5e-4e2a-4695-83be-f809eb95d80b)
@@ -146,7 +148,7 @@ A preview of the BSF time series for Europe from 2000 to 2022:
   - DOI: https://zenodo.org/records/10776892
 
 ## Disclaimer
-The production of this data cube is within the frame of [AI4SoilHealth](https://cordis.europa.eu/project/id/101086179), funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Commision. Neither the European Union nor the granting authority can be held responsible for them. The data is provided “as is”. AI4SoilHealth project consortium and its suppliers and licensors hereby disclaim all warranties of any kind, express or implied, including, without limitation, the warranties of merchantability, fitness for a particular purpose and non-infringement. Neither AI4SoilHealth Consortium nor its suppliers and licensors, makes any warranty that the Website will be error free or that access thereto will be continuous or uninterrupted. You understand that you download from, or otherwise obtain content or services through, the Website at your own discretion and risk. 
+The production of this data cube is part of [AI4SoilHealth](https://cordis.europa.eu/project/id/101086179) project. The AI4SoilHealth project project has received funding from the European Union's Horizon Europe research an innovation programme under grant agreement No. 101086179. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Commision. Neither the European Union nor the granting authority can be held responsible for them. The data is provided “as is”. AI4SoilHealth project consortium and its suppliers and licensors hereby disclaim all warranties of any kind, express or implied, including, without limitation, the warranties of merchantability, fitness for a particular purpose and non-infringement. Neither AI4SoilHealth Consortium nor its suppliers and licensors, makes any warranty that the Website will be error free or that access thereto will be continuous or uninterrupted. You understand that you download from, or otherwise obtain content or services through, the Website at your own discretion and risk. 
 
 ## Contacts
 
