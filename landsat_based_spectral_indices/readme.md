@@ -6,7 +6,7 @@ All the data within this folder is licensed under CC-BY-SA, and the code is lice
 
 Please cite as:
 
-- Tian, X., Consoli, D., Schneider, F., Hengl, T., Parente, L., Şahin, M., Minařík, R., Ho, Y., (2024?) "Time-series of Landsat-based spectral indices for continental Europe for 2000–2022 to support soil health monitoring", submitted to [PeerJ], preprint available at: [to be filled].
+- Tian, X., Consoli, D., Hengl, T., Schneider, F., Parente, L., Şahin, M., Minařík, R., Ho, Y., (2024?) "Time-series of Landsat-based spectral indices for continental Europe for 2000–2022 to support soil health monitoring", submitted to [PeerJ], preprint available at: [to be filled].
 
 ## Summary
 This folder provides 
@@ -78,6 +78,48 @@ A preview of the BSF (%) time series for Europe from 2000 to 2022:
   - Description: Thermal band aggregated yearly from 30-m bi-monthly gapfilled GLAD Landsat ARD thermal band from 2000 to 2022.
   - Theme: Surface reflectance
   - DOI: https://doi.org/10.5281/zenodo.10851081
+
+  **Bi-monthly Normalized Difference Vegetation Index (NDVI)**
+  - URL: https://stac.ecodatacube.eu/ndvi_glad.landsat.ard2.seasconv/collection.json
+  - Description: [NDVI](Tucker, 1979) quantifies vegetation greenness, computed from 30-m bi-monthly aggregated and gapfilled GLAD Landsat ARD from 2000 to 2022.
+  - Theme: Vegetation
+  - DOI: https://doi.org/10.5281/zenodo.10884235
+
+
+  **Bi-monthly Soil Adjusted Vegetation Index(SAVI)**
+  - URL: https://stac.ecodatacube.eu/savi_glad.landsat.ard2.seasconv.bimonthly.m/collection.json
+  - Description: [SAVI](Huete, 1988) is a vegetation index that attempts to minimize soil brightness influences using a soil-brightness correction factor, computed from 30-m bi-monthly aggregated and gapfilled GLAD Landsat ARD from 2000 to 2022.
+  - Theme: Vegetation
+  - DOI: https://doi.org/10.5281/zenodo.10884235
+
+
+  **Bi-monthly Fraction of Absorbed Photosynthetically Active Radiation (FAPAR)**
+  - URL: https://stac.ecodatacube.eu/fapar_glad.landsat.ard2.seasconv/collection.json
+  - Description: [FAPAR](Robinson et al., 2018) quantifies the fraction of the solar radiation absorbed by live leaves for the photosynthesis activity, computed from 30-m bi-montlhy NDVI from 2000 to 2022.
+  - Theme: Vegetation
+  - DOI: https://doi.org/10.5281/zenodo.10884235
+
+
+  **Bi-monthly Normalized Difference Snow Index (NDSI)**
+  - URL: https://stac.ecodatacube.eu/ndsi_glad.landsat.ard2.seasconv/collection.json
+  - Description: NDSI computed for 30-m bi-monthly aggregated and gapfilled GLAD Landsat ARD from 2000 to 2022.
+  - Theme: Vegetation
+  - DOI: https://doi.org/10.5281/zenodo.10884235
+
+
+  **Bi-monthly Normalized Difference Water Index (NDWI, Gao)**
+  - URL: https://stac.ecodatacube.eu/ndwi.gao_glad.landsat.ard2.seasconv.bimonthly.m/collection.json
+  - Description: [NDWI](Gao, 1996) indicates vegetation liquid water content, computed from 30-m bi-monthly aggregated and gapfilled GLAD Landsat ARD from 2000 to 2022.
+  - Theme: Water
+  - DOI: https://doi.org/10.5281/zenodo.10884235
+
+
+  **Bi-monthly Landsat Normalized Difference Tillage Intensity (NDTI)**
+  - URL: https://stac.ecodatacube.eu/ndti_glad.landsat.ard2.seasconv/collection.json
+  - Description: [NDTI](Van Deventer et al., 1997) differentiates crop residues from soil, computed from 30-m bi-monthly aggregated and gapfilled GLAD Landsat ARD from 2000 to 2022.
+  - Theme: Tillage
+  - DOI: https://doi.org/10.5281/zenodo.10884235
+
 
 **Yearly Normalized Difference Vegetation Index (NDVI)**
   - URL: https://stac.ecodatacube.eu/ndvi_glad.landsat.ard2.seasconv.m.yearly/collection.json
