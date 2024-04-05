@@ -1,7 +1,7 @@
 # SoilHealthDataCube
 Soil Health Data Cube for Europe
 
-All the data within this folder is licensed under CC-BY-SA, and the code is licensed under the MIT License.
+All the data is licensed under CC-BY-SA, and the code is licensed under the MIT License.
 ## Pan-EU Landmask
 Three Pan-EU land masks designed for different specific applications in the production of soil health data cube:
    - **Land mask**: with values differentiating land, ocean, and inland water
