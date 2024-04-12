@@ -18,7 +18,7 @@ This data cube offers a time-series of Landsat-based spectral indices maps acros
 
 Please cite as:
 
-- Tian, X., Consoli, D., Hengl, T., Schneider, F., Parente, L., Şahin, M., Minařík, R., Ho, Y., (2024?) "Time-series of Landsat-based spectral indices for continental Europe for 2000–2022 to support soil health monitoring", submitted to [PeerJ], preprint available at: [to be filled].
+- Tian, X., Consoli, D., Hengl, T., Schneider, F., Parente, L., Şahin, M., Minařík, R., Ho, Y., (2024?) "Time-series of Landsat-based spectral indices for continental Europe for 2000–2022 to support soil health monitoring", submitted to [PeerJ], preprint available at: https://doi.org/10.21203/rs.3.rs-4251113/v1.
 
 ### Summary
 The corresponding folder provides 
