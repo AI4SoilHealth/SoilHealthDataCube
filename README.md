@@ -3,7 +3,10 @@ Soil Health Data Cube for Europe
 
 All the data is licensed under CC-BY-SA, and the code is licensed under the MIT License.
 ## Pan-EU Landmask
-Three Pan-EU land masks designed for different specific applications in the production of soil health data cube:
+
+<a rel="license" href="https://zenodo.org/doi/10.5281/zenodo.8171860"><img alt="DOI" style="border-width:0" src="https://zenodo.org/badge/DOI/10.5281/zenodo.8171860.svg" /></a><br />
+
+[Three Pan-EU land masks](https://zenodo.org/doi/10.5281/zenodo.8171860) designed for different specific applications in the production of soil health data cube:
    - **Land mask**: with values differentiating land, ocean, and inland water
    - **NUT-3 code map**: with values differentiating administrative area at nut-3 level
    - **ISO-3166 country code map**: with values differentiating countries according to ISO-3166 standard
@@ -14,6 +17,9 @@ All the landmasks are aligned with the standard spatial/temporal resolution and 
 These masks are created by [Xuemeng](xuemeng.tian@opengeohub.org), [Yu-Feng](yu-feng.ho@opengeohub.org), and [Martijn](martijn.witjes@opengeohub.org) from [OpenGeoHub](https://opengeohub.org/). If you spot any problems in the land masks, or see any possible improvements in them, or have any questions, or etc..., just raise an issue [here](https://github.com/AI4SoilHealth/SoilHealthDataCube/issues) or send us emails! We appreciate any feedbacks that could refine these masks.
 
 ## Landsat-based Spectral Indices Data Cube
+
+<a rel="license" href="https://zenodo.org/doi/10.5281/zenodo.10776891"><img alt="DOI" style="border-width:0" src="https://zenodo.org/badge/DOI/10.5281/zenodo.10776891.svg" /></a><br />
+
 This data cube offers a time-series of Landsat-based spectral indices maps across continental Europe—including Ukraine, the UK, and Turkey—from 2000 to 2022. At a resolution of 30 meters, it includes bi-monthly, annual, and long-term analyses, focusing on key aspects of soil health such as vegetation cover, soil exposure, tillage practices, and crop intensity. Apart from direct monitoring, analysis, and verification of specific aspects of soil health, this data cube also provides important input for modeling and mapping soil properties. All the maps are aligned with the standard spatial/temporal resolution and sizes indicated/recomended by AI4SoilHealth project, Work Package - 5.
 
 Please cite as:
@@ -39,7 +45,6 @@ General steps of maps production are:
 A preview of the BSF (%) time series for Europe from 2000 to 2022:
 
 ![global_view4](https://github.com/AI4SoilHealth/SoilHealthDataCube/assets/96083275/1b14d38b-30d9-42c8-9b03-d257576cdb43)
-
 
 
 ### Access to the data cube
