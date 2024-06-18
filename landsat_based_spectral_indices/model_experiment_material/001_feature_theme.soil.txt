@@ -1,0 +1,17 @@
+ndti_glad.landast.ard2.seasconv_m_30m_s_{year}0101_{year}0228_eu_epsg.3035_v20231127
+ndti_glad.landast.ard2.seasconv_m_30m_s_{year}0301_{year}0430_eu_epsg.3035_v20231127
+ndti_glad.landast.ard2.seasconv_m_30m_s_{year}0501_{year}0630_eu_epsg.3035_v20231127
+ndti_glad.landast.ard2.seasconv_m_30m_s_{year}0701_{year}0831_eu_epsg.3035_v20231127
+ndti_glad.landast.ard2.seasconv_m_30m_s_{year}0901_{year}1031_eu_epsg.3035_v20231127
+ndti_glad.landast.ard2.seasconv_m_30m_s_{year}1101_{year}1231_eu_epsg.3035_v20231127
+ndti_glad.landast.ard2.seasconv.m.yearly_p25_30m_s_{year}0101_{year}1231_eu_epsg.3035_v20231127
+ndti_glad.landast.ard2.seasconv.m.yearly_p50_30m_s_{year}0101_{year}1231_eu_epsg.3035_v20231127
+ndti_glad.landast.ard2.seasconv.m.yearly_p75_30m_s_{year}0101_{year}1231_eu_epsg.3035_v20231127
+bsf_glad.landsat.ard2.seasconv.m.yearly_sum_30m_s_{year}0101_{year}1231_eu_epsg.3035_v20231127
+ndti.min_glad.landsat.ard2.seasconv.bimonthly.min_m_30m_s_{year}0101_{year}1231_eu_epsg.3035_v20231218
+accum.ndti_glad.landsat.seasconv.m.yearly_min_30m_s_{year}0101_{year}_eu_epsg.3035_v20240513
+bsf_glad.landsat.ard2.seasconv.longterm_p25_30m_s_20000101_20221231_eu_epsg.3035_v20231218
+bsf_glad.landsat.ard2.seasconv.longterm_p50_30m_s_20000101_20221231_eu_epsg.3035_v20231218
+bsf_glad.landsat.ard2.seasconv.longterm_p75_30m_s_20000101_20221231_eu_epsg.3035_v20231218
+bsf_glad.landsat.ard2.seasconv.yearly.m.theilslopes_m_30m_s_20000101_20221231_eu_epsg.3035_v20231218
+ndti.min.slopes_glad.landsat.ard2.seasconv.yearly.min.theilslopes_m_30m_s_20000101_20221231_eu_epsg.3035_v20231218

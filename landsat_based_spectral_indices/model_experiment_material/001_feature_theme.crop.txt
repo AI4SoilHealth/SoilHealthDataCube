@@ -1,0 +1,2 @@
+nos_glad.landsat.ard2.seasconv_m_30m_s_{year}0101_{year}1231_eu_epsg.3035_v20231127
+cdr_glad.landsat.seasconv_m_30m_s_{year}0101_{year}1231_eu_epsg.3035_v20231127
