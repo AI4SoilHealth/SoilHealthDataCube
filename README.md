@@ -207,6 +207,10 @@ A preview of the BSF (%) time series for Europe from 2000 to 2022:
   - Theme: Tillage
   - DOI: https://zenodo.org/records/10776892
 
+### Contacts
+These maps are created by [Xuemeng](xuemeng.tian@opengeohub.org), [Davide](davide.consoli@opengeohub.org), [Leandro](leandro.parente@opengeohub.org), and [Yu-Feng](yu-feng.ho@opengeohub.org) from [OpenGeoHub](https://opengeohub.org/). If you spot any problems in the maps, or see any possible improvements in them, or see any potential collaborations, or etc..., just raise an issue [here](https://github.com/AI4SoilHealth/SoilHealthDataCube/issues) or send us emails! We appreciate any feedbacks/helps that could refine them.
+
+
 ## Predictive models for soil properties
 ### Overview
 The folder **soil_property_model_pipeline** contains scripts used to build predictive models for 10 key soil properties:
@@ -293,10 +297,8 @@ A standardized pipeline has been developed to automate model development for pre
   - Quantile Regression Model: A quantile model will be trained with same parameters on the complete dataset to estimate prediction intervals.
   - Map Production: Fully trained model used for soil property prediction and uncertainty map production.
 
-
-
 ### Contacts
-These maps are created by [Xuemeng](xuemeng.tian@opengeohub.org), [Davide](davide.consoli@opengeohub.org), [Leandro](leandro.parente@opengeohub.org), and [Yu-Feng](yu-feng.ho@opengeohub.org) from [OpenGeoHub](https://opengeohub.org/). If you spot any problems in the maps, or see any possible improvements in them, or see any potential collaborations, or etc..., just raise an issue [here](https://github.com/AI4SoilHealth/SoilHealthDataCube/issues) or send us emails! We appreciate any feedbacks/helps that could refine them.
+These maps are created by [Xuemeng](xuemeng.tian@opengeohub.org), [Rolf](rolf.simoes@opengeohub.org), [Davide](davide.consoli@opengeohub.org), [Leandro](leandro.parente@opengeohub.org), [Robert](robert.minarik@opengeohub.org) and [Yu-Feng](yu-feng.ho@opengeohub.org) from [OpenGeoHub](https://opengeohub.org/). If you spot any problems in the maps, or see any possible improvements in them, or see any potential collaborations, or etc..., just raise an issue [here](https://github.com/AI4SoilHealth/SoilHealthDataCube/issues) or send us emails! We appreciate any feedbacks/helps that could refine them.
 
 ## Disclaimer
 The production of these data layers are parts of [AI4SoilHealth](https://cordis.europa.eu/project/id/101086179) project. The AI4SoilHealth project project has received funding from the European Union's Horizon Europe research an innovation programme under grant agreement No. 101086179. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Commision. Neither the European Union nor the granting authority can be held responsible for them. The data is provided “as is”. AI4SoilHealth project consortium and its suppliers and licensors hereby disclaim all warranties of any kind, express or implied, including, without limitation, the warranties of merchantability, fitness for a particular purpose and non-infringement. Neither AI4SoilHealth Consortium nor its suppliers and licensors, makes any warranty that the Website will be error free or that access thereto will be continuous or uninterrupted. You understand that you download from, or otherwise obtain content or services through, the Website at your own discretion and risk. 
