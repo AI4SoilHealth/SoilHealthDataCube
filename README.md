@@ -207,6 +207,94 @@ A preview of the BSF (%) time series for Europe from 2000 to 2022:
   - Theme: Tillage
   - DOI: https://zenodo.org/records/10776892
 
+## Predictive models for soil properties
+### Overview
+The folder **soil_property_model_pipeline** contains scripts used to build predictive models for 10 key soil properties:
+
+1. Soil Organic Carbon (SOC)
+2. Nitrogen (N)
+3. Carbonate (CaCO3)
+4. Cation Exchange Capacity (CEC)
+5. Electrical Conductivity (EC)
+6. pH in Water
+7. pH in CaCl2 Solution
+8. Bulk Density
+9. Extractable Phosphorus (P)
+10. Extractable Potassium (K)
+
+The notebooks and their content:
+- **Notebooks (001 -- 009)**
+  - Designed to test various steps in the predictive model building process
+  - Explore and validate different methodologies and approaches for model construction
+
+- **Benchmark Pipeline Script**
+  - `benchmark_pipeline.py` automates the entire model-building pipeline
+  - Streamlines the process based on the initial 10 notebooks
+
+- **Property-Specific Modeling (010 -- 011)**
+  - Notebooks with indices `010 -- 011` loop the pipeline through different soil properties
+  - Identify and optimize the best model for each property
+
+- **Prediction Interval Models (012 -- 014)**
+  - Notebooks with indices `012 -- 014` build models that estimate prediction intervals
+  - Add a layer of uncertainty quantification to the predictions
+
+
+### Input material
+- The **training data** includes comprehensive metadata (sampling year, depth, location) and quality scores for each measurement, covering the above mentioned 10 properties. Details can be found in [AI4SH soil data harmonization specifications](https://docs.google.com/spreadsheets/d/1J652XU_VWmbm1uLmeywlF6kfe7fUD5aJrfAIK97th1E/edit?usp=sharing).
+- The **features** used for model fitting and map production contain around 450 covariate layers. Details can be found in [AI4SH soil health data cube covariates preparation](https://docs.google.com/spreadsheets/d/1eIoPAvWM5jrhLrr25jwguAIR0YxOh3f5-CdXwpcOIz8/edit?usp=sharing). These layers comply with the technical specifications outlined in D5.1: Soil Health Data Cube, ensuring they are well-suited for integration, cross-comparison, and subsequent map production. The covariate layers include a diverse range of geospatial layers detailing various environmental conditions, categorized into:
+  - Climate
+  - [Landsat-based spectral indices](https://github.com/AI4SoilHealth/SoilHealthDataCube/tree/main?tab=readme-ov-file#landsat-based-spectral-indices-data-cube)
+  - Parental material
+  - Water cycle
+  - Terrain
+  - Human pressure factors
+
+
+### Pipeline Description
+A standardized pipeline has been developed to automate model development for predicting soil properties. This pipeline enhances model performance through hyper-parameter tuning, feature selection, and cross-validation. The process begins with inputting harmonized soil data, covariate paths, and a defined quality score threshold to ensure data reliability. The inputs, processing steps and outputs are:
+
+- **Input Data Preparation**:
+   - Harmonized soil data
+   - List of covariate paths
+   - Quality score threshold
+
+- **Model Candidates**:
+   - Artificial Neural Network (ANN)
+   - Random Forest (RF)
+   - LightGBM
+   - Weighted variants (excluding ANN due to scikit-learn limitations)
+     
+- **Processing steps**:
+   1. Separate calibration, training and testing dataset:
+      - Validation Dataset: 5000 soil points selected from LUCAS through stratified random sampling.
+      - Calibration Dataset: 20% of remaining soil data points selected in a stratified manner from each spatial block (approx. 120 km grids).
+      - Training Dataset: remaining 80% soil data points.
+   2. Calibration using calibration dataset
+      - Feature Selection: Using a default Random Forest (RF) model from scikit-learn.
+      - Hyper-parameter Tuning: Using HalvingGridSearch from scikit-learn.
+   3. Cross-validation of base models on training dataset
+      - Spatial Blocking Strategy: in each run, it is ensured that geographically proximate (approx. 120 km grids) soil points are not selected together.
+      - Method: 5-fold spatially blocked cross-validation (CV).
+      - Metrics: Coefficient of determination (R2), Root Mean Square Error (RMSE), Concordance Correlation Coefficient (CCC), and computation time.
+   4. Testing on individual validation dataset
+      - All 5 candidate models are trained on the whole training dataset.
+      - And then being tested on the individual validation dataset, to get a set of objective metrics.
+      
+-  **Intemediate outputs during process**:
+   - Produces calibration and training datasets
+   - Trained models
+   - Sorted feature importance
+   - Performance metrics and accuracy plots
+
+- **Final Model**
+  - Selection: Model with the best overall performance across metrics for both CV and individual validation.
+  - Training: Trained on the complete dataset of soil points using optimized features and parameters.
+  - Quantile Regression Model: A quantile model will be trained with same parameters on the complete dataset to estimate prediction intervals.
+  - Map Production: Fully trained model used for soil property prediction and uncertainty map production.
+
+
+
 ### Contacts
 These maps are created by [Xuemeng](xuemeng.tian@opengeohub.org), [Davide](davide.consoli@opengeohub.org), [Leandro](leandro.parente@opengeohub.org), and [Yu-Feng](yu-feng.ho@opengeohub.org) from [OpenGeoHub](https://opengeohub.org/). If you spot any problems in the maps, or see any possible improvements in them, or see any potential collaborations, or etc..., just raise an issue [here](https://github.com/AI4SoilHealth/SoilHealthDataCube/issues) or send us emails! We appreciate any feedbacks/helps that could refine them.
 
