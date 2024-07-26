@@ -1,7 +1,7 @@
 # SoilHealthDataCube
 Soil Health Data Cube for Europe
 
-All the data is licensed under CC-BY-SA, and the code is licensed under the MIT License.
+All the data is licensed under CC-BY, and the code is licensed under the MIT License.
 ## Pan-EU Landmask
 
 <a rel="license" href="https://zenodo.org/doi/10.5281/zenodo.8171860"><img alt="DOI" style="border-width:0" src="https://zenodo.org/badge/DOI/10.5281/zenodo.8171860.svg" /></a><br />
