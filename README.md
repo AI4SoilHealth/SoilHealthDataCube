@@ -5,13 +5,13 @@ For technical information please refer to the **Soil Health Data Cube for Europe
 
 List of notebooks available in this repository:
 
-- **landsat_based_spectral_indices**: Essential code & data used to generate/analyze/visualize/upload the landsat-based spectral indices data cube;
+- **[landsat_based_spectral_indices](/landsat_based_spectral_indices)**: Essential code & data used to generate/analyze/visualize/upload the landsat-based spectral indices data cube;
 
-- **soil_property_model_pipeline**: contains scripts used to build predictive models for 10 key soil properties;
+- **[soil_property_model_pipeline](/soil_property_model_pipeline)**: contains scripts used to build predictive models for 10 key soil properties;
 
 - **WRB_map**: contains scripts used to test, train, evaluate predictive models to map soil types based on the IUSS World Reference Base classification system.
 
-- **SOCD_map**: contains number of notebooks listed below:
+- **[SOCD_map](/SOCD_map)**: contains number of notebooks listed below:
 
 - **Notebooks (001 -- 009)**
   - Designed to test various steps in the predictive model building process
@@ -29,7 +29,7 @@ List of notebooks available in this repository:
   - Notebooks with indices `012 -- 014` build models that estimate prediction intervals
   - Add a layer of uncertainty quantification to the predictions
 
-## Acknowledgments {.unnumbered}
+## Acknowledgments
 
 **[AI4SoilHealth.eu](https://AI4SoilHealth.eu)** project has received funding 
 from the European Union's Horizon Europe research an innovation programme under 
