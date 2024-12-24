@@ -1,5 +1,8 @@
 # SoilHealthDataCube
-Soil Health Data Cube for Europe. All the data is licensed under CC-BY, and the code is licensed under the MIT License.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14334987.svg)](https://doi.org/10.5281/zenodo.14334987)
+
+Soil Health Data Cube for Europe technical documentation and computational notebooks. All the data is licensed under CC-BY, and the code is licensed under the MIT License.
 
 For technical information please refer to the **Soil Health Data Cube for Europe technical manual**: <https://shdc.ai4soilhealth.eu/>
 
@@ -39,8 +42,3 @@ Funded by the European Union. Views and opinions expressed are however those of
 the author(s) only and do not necessarily reflect those of the European Union or 
 European Research Executive Agency. Neither the European Union nor the granting 
 authority can be held responsible for them.
-
-
-
-
- 
