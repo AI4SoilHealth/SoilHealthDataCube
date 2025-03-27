@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
-from eumap.misc import find_files, ttprint, nan_percentile, GoogleSheet
-from eumap.raster import read_rasters, save_rasters
+from skmap.overlay import SpaceOverlay, SpaceTimeOverlay
+from skmap.misc import find_files, GoogleSheet, ttprint
 import warnings
 import multiprocess as mp
 import time
