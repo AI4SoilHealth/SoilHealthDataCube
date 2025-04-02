@@ -451,74 +451,6 @@ def accuracy_plot(y_test, y_pred, tgt, mdl, test_type, output_folder):
     plt.savefig(f'{output_folder}/plot_accuracy.{tgt}_{mdl}.{test_type}.pdf', format='pdf', bbox_inches='tight', dpi=300)
     return rmse, mae, medae, mape, ccc, r2, bias
 
-def uncertainty_evaluation(model_file, train, test, tgt):
-    # read in material--------------------------------------------------------------
-    model = joblib.load(model_file)
-    model.n_jobs =-1
-    model_name = model_file.split('_')[-2].split('.')[0]
-    covs = model.feature_names_in_
-    
-    model.fit(train[covs], train[tgt])
-    model = cast_tree_rf(model)
-    
-    # tree predictions
-    tree_predictions = model.predict(test[covs])
-    y_pred = np.mean(tree_predictions, axis=0) # get the mean before transformation
-    y_pred = np.expm1(y_pred)
-    
-    # calculate quantiles to form an accuracy plots
-    if space == 'log1p':
-        tree_predictions = np.expm1(tree_predictions) # tranform before getting the percentile
-        
-    quantiles = [0.005, 0.025, 0.05, 0.1 , 0.15, 0.2 , 0.25, 0.3 , 0.35, 0.4 , 0.45, 0.495, 0.5 , 0.505, 0.55,
-                 0.6 , 0.65, 0.7 , 0.75, 0.8 , 0.85, 0.9 , 0.95, 0.975, 0.995]
-    y_q = np.percentile(tree_predictions, [q * 100 for q in quantiles], axis=0)
-    qcp = []
-    for ii in range(len(quantiles)):
-        qcp.append(calc_qcp(y_q[ii], test[prop], quantiles[ii]))
-
-    # calculate piw, picp
-    pi = []
-    picp = []
-    piw_m = []
-    piw_med = []
-    for ii in range(12):
-        jj = len(quantiles)-1-ii
-        pi.append(round(1-quantiles[ii]*2,2))
-        picp.append(calc_picp(y_q[ii,:], y_q[jj,:], test[prop]))
-        piw_m.append(np.mean(y_q[jj,:]-y_q[ii,:]))
-        piw_med.append(np.median(y_q[jj,:]-y_q[ii,:]))
-        
-    # calculate PICP for target PI (+- 1 std): 68%, P16-P84
-    target_pi = [0.16, 0.84]
-    pib = np.percentile(tree_predictions, [q * 100 for q in target_pi], axis=0)
-    target_picp = calc_picp(pib[0], pib[1], test[prop])
-
-    # plot
-    fig, axs = plt.subplots(1, 2, figsize=(12, 5), sharey=False)
-    axs[0].plot(quantiles, quantiles, label='1:1 line')
-    axs[0].scatter(quantiles, qcp, color='black')
-    axs[0].set_xlabel('Target quantiles', fontsize=20)
-    axs[0].set_ylabel('QCP', fontsize=20)
-    axs[0].grid(True)
-    axs[0].legend(fontsize=20, frameon=False)  # Make legend background transparent
-    axs[0].tick_params(axis='both', which='major', labelsize=20)
-
-    axs[1].axvline(x=0.68, color='orange', linestyle='--', linewidth=2, label=f'Target PI 68%:\nPICP {target_picp*100:.0f}%')  # Use axvline to draw a vertical line across the entire plot
-    axs[1].plot(pi, pi, label='1:1 line')
-    axs[1].scatter(pi, picp, color='black')
-    axs[1].set_xlabel('PI', fontsize=20)
-    axs[1].set_ylabel('PICP', fontsize=20)
-    axs[1].grid(True)
-    axs[1].legend(fontsize=20, frameon=False)  # Make legend background transparent
-    axs[1].tick_params(axis='both', which='major', labelsize=20)
-
-    plt.subplots_adjust(wspace=0.3)  
-    plt.savefig(f'{output_folder}/plot_acuracy.uncertainty_{prop}.pdf', format='pdf', dpi=300, bbox_inches='tight')
-    plt.show()
-
-
-
 
 def accuracy_strata_plot(metric, strata_df, prop, mdl):
 
@@ -665,7 +597,196 @@ def separate_data(prop, space, output_folder, date_str, df, strata_col):
     return cal, train, test
 
 
-import matplotlib.pyplot as plt
+
+        
+def textures_fw_transform(sand, silt, clay, k=1, a=100):
+    """
+    Forward transformation from sand, silt, and clay fractions to texture_1 and texture_2
+    using logarithm base 2.
+
+    Parameters:
+    - sand, silt, clay: Soil texture fractions (absolute values, not normalized)
+    - k: Small offset to avoid division by zero
+    - a: Normalization factor (typically 100)
+
+    Returns:
+    - texture_1, texture_2: Transformed soil texture values
+    """
+    texture_1 = np.log2((sand / a + k) / (clay / a + k))
+    texture_2 = np.log2((silt / a + k) / (clay / a + k))
+    
+    return texture_1, texture_2
+
+    
+def textures_bw_transform(texture_1, texture_2, k=1, a=100):
+    """
+    Backward transformation from texture_1 and texture_2 back to sand, silt, and clay fractions.
+
+    Parameters:
+    - texture_1, texture_2: Transformed soil texture values
+    - k: Small offset used in the forward transform
+    - a: Normalization factor (typically 100)
+
+    Returns:
+    - sand, silt, clay: Reconstructed soil texture fractions (absolute values)
+    """
+    # Invert log2 transformation
+    x1 = 2 ** texture_1
+    x2 = 2 ** texture_2
+
+    # Solve for clay fraction
+    C = (1 - (x1 + x2 - 2) * k) / (x1 + x2 + 1)
+
+    # Solve for sand and silt fractions
+    S = x1 * C + x1 * k - k
+    L = x2 * C + x2 * k - k
+
+    # Convert back to absolute values
+    sand = a * S
+    silt = a * L
+    clay = a * C
+
+    return sand, silt, clay
+
+from sklearn.utils.validation import check_is_fitted
+# import skmap_bindings as skb
+from joblib import Parallel, delayed
+import threading
+
+def _single_prediction(predict, X, out, i, lock):
+    prediction = predict(X, check_input=False)
+    with lock:
+        out[i, :] = prediction
+
+def cast_tree_rf(model):
+    model.__class__ = TreesRandomForestRegressor
+    return model
+
+class TreesRandomForestRegressor(RandomForestRegressor):
+    def predict(self, X):
+        """
+        Predict regression target for X.
+
+        The predicted regression target of an input sample is computed according
+        to a list of functions that receives the predicted regression targets of each 
+        single tree in the forest.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix} of shape (n_samples, n_features)
+            The input samples. Internally, its dtype will be converted to
+            `dtype=np.float32. If a sparse matrix is provided, it will be
+            converted into a sparse `csr_matrix.
+
+        Returns
+        -------
+        s : an ndarray of shape (n_estimators, n_samples)
+            The predicted values for each single tree.
+        """
+        check_is_fitted(self)
+        # Check data
+        X = self._validate_X_predict(X)
+
+        # store the output of every estimator
+        assert(self.n_outputs_ == 1)
+        pred_t = np.empty((len(self.estimators_), X.shape[0]), dtype=np.float32)
+        # Assign chunk of trees to jobs
+        n_jobs = min(self.n_estimators, self.n_jobs)
+        # Parallel loop prediction
+        lock = threading.Lock()
+        Parallel(n_jobs=n_jobs, verbose=self.verbose, require="sharedmem")(
+            delayed(_single_prediction)(self.estimators_[i].predict, X, pred_t, i, lock)
+            for i in range(len(self.estimators_))
+        )
+        return pred_t
+
+    
+    import matplotlib.pyplot as plt
+    
+    
+def calc_picp(lower_bounds, upper_bounds, true_values):
+    within_bounds = np.sum((true_values >= lower_bounds) & (true_values <= upper_bounds))
+    picp = within_bounds / len(true_values)
+    return picp
+
+def calc_qcp(predictions, true_values, quantile):
+    return np.mean(true_values <= predictions)
+
+def uncertainty_evaluation(model_file, train, test, tgt, output_folder):
+    # read in material--------------------------------------------------------------
+    model = joblib.load(model_file)
+    model.n_jobs =-1
+    model_name = model_file.split('_')[-2].split('.')[0]
+    covs = model.feature_names_in_
+    
+    model.fit(train[covs], train[tgt])
+    model = cast_tree_rf(model)
+    
+    prop = tgt.split('_')[0]
+    if len(tgt.split('_'))>1:
+        space = tgt.split('_')[-1]
+    else:
+        space = 'normal'
+    
+    # tree predictions
+    tree_predictions = model.predict(test[covs])
+    y_pred = np.mean(tree_predictions, axis=0) # get the mean before transformation
+    y_pred = np.expm1(y_pred)
+    
+    # calculate quantiles to form an accuracy plots
+    if space == 'log1p':
+        tree_predictions = np.expm1(tree_predictions) # tranform before getting the percentile
+        
+    quantiles = [0.005, 0.025, 0.05, 0.1 , 0.15, 0.2 , 0.25, 0.3 , 0.35, 0.4 , 0.45, 0.495, 0.5 , 0.505, 0.55,
+                 0.6 , 0.65, 0.7 , 0.75, 0.8 , 0.85, 0.9 , 0.95, 0.975, 0.995]
+    y_q = np.percentile(tree_predictions, [q * 100 for q in quantiles], axis=0)
+    qcp = []
+    for ii in range(len(quantiles)):
+        qcp.append(calc_qcp(y_q[ii], test[prop], quantiles[ii]))
+
+    # calculate piw, picp
+    pi = []
+    picp = []
+    piw_m = []
+    piw_med = []
+    for ii in range(12):
+        jj = len(quantiles)-1-ii
+        pi.append(round(1-quantiles[ii]*2,2))
+        picp.append(calc_picp(y_q[ii,:], y_q[jj,:], test[prop]))
+        piw_m.append(np.mean(y_q[jj,:]-y_q[ii,:]))
+        piw_med.append(np.median(y_q[jj,:]-y_q[ii,:]))
+        
+    # calculate PICP for target PI (+- 1 std): 68%, P16-P84
+    target_pi = [0.16, 0.84]
+    pib = np.percentile(tree_predictions, [q * 100 for q in target_pi], axis=0)
+    target_picp = calc_picp(pib[0], pib[1], test[prop])
+
+    # plot
+    fig, axs = plt.subplots(1, 2, figsize=(12, 5), sharey=False)
+    fig.suptitle(f'Uncertainty Accuracy Plots {prop}', fontsize=20, y=1.05)  # y can be adjusted for spacing
+    axs[0].plot(quantiles, quantiles, label='1:1 line')
+    axs[0].scatter(quantiles, qcp, color='black')
+    axs[0].set_xlabel('Target quantiles', fontsize=20)
+    axs[0].set_ylabel('QCP', fontsize=20)
+    axs[0].grid(True)
+    axs[0].legend(fontsize=20, frameon=False)  # Make legend background transparent
+    axs[0].tick_params(axis='both', which='major', labelsize=20)
+
+    axs[1].axvline(x=0.68, color='orange', linestyle='--', linewidth=2, label=f'Target PI 68%:\nPICP {target_picp*100:.0f}%')  # Use axvline to draw a vertical line across the entire plot
+    axs[1].plot(pi, pi, label='1:1 line')
+    axs[1].scatter(pi, picp, color='black')
+    axs[1].set_xlabel('PI', fontsize=20)
+    axs[1].set_ylabel('PICP', fontsize=20)
+    axs[1].grid(True)
+    axs[1].legend(fontsize=20, frameon=False)  # Make legend background transparent
+    axs[1].tick_params(axis='both', which='major', labelsize=20)
+
+    plt.subplots_adjust(wspace=0.3)  
+    plt.savefig(f'{output_folder}/plot_acuracy.uncertainty_{prop}.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    plt.show()
+
+    
+    
 def plot_top_features(prop, mdl, data_path, top_n=10):
     """
     Plots the top N features by importance in descending order.
@@ -816,104 +937,3 @@ def pdp_hexbin(df, prop, space, mdl, data_path, fn = 3, grid_resolution=50, bins
         plt.close()
         
         
-        
-def textures_fw_transform(sand, silt, clay, k=1, a=100):
-    """
-    Forward transformation from sand, silt, and clay fractions to texture_1 and texture_2
-    using logarithm base 2.
-
-    Parameters:
-    - sand, silt, clay: Soil texture fractions (absolute values, not normalized)
-    - k: Small offset to avoid division by zero
-    - a: Normalization factor (typically 100)
-
-    Returns:
-    - texture_1, texture_2: Transformed soil texture values
-    """
-    texture_1 = np.log2((sand / a + k) / (clay / a + k))
-    texture_2 = np.log2((silt / a + k) / (clay / a + k))
-    
-    return texture_1, texture_2
-
-    
-def textures_bw_transform(texture_1, texture_2, k=1, a=100):
-    """
-    Backward transformation from texture_1 and texture_2 back to sand, silt, and clay fractions.
-
-    Parameters:
-    - texture_1, texture_2: Transformed soil texture values
-    - k: Small offset used in the forward transform
-    - a: Normalization factor (typically 100)
-
-    Returns:
-    - sand, silt, clay: Reconstructed soil texture fractions (absolute values)
-    """
-    # Invert log2 transformation
-    x1 = 2 ** texture_1
-    x2 = 2 ** texture_2
-
-    # Solve for clay fraction
-    C = (1 - (x1 + x2 - 2) * k) / (x1 + x2 + 1)
-
-    # Solve for sand and silt fractions
-    S = x1 * C + x1 * k - k
-    L = x2 * C + x2 * k - k
-
-    # Convert back to absolute values
-    sand = a * S
-    silt = a * L
-    clay = a * C
-
-    return sand, silt, clay
-
-from sklearn.utils.validation import check_is_fitted
-# import skmap_bindings as skb
-from joblib import Parallel, delayed
-import threading
-
-def _single_prediction(predict, X, out, i, lock):
-    prediction = predict(X, check_input=False)
-    with lock:
-        out[i, :] = prediction
-
-def cast_tree_rf(model):
-    model.__class__ = TreesRandomForestRegressor
-    return model
-
-class TreesRandomForestRegressor(RandomForestRegressor):
-    def predict(self, X):
-        """
-        Predict regression target for X.
-
-        The predicted regression target of an input sample is computed according
-        to a list of functions that receives the predicted regression targets of each 
-        single tree in the forest.
-
-        Parameters
-        ----------
-        X : {array-like, sparse matrix} of shape (n_samples, n_features)
-            The input samples. Internally, its dtype will be converted to
-            `dtype=np.float32. If a sparse matrix is provided, it will be
-            converted into a sparse `csr_matrix.
-
-        Returns
-        -------
-        s : an ndarray of shape (n_estimators, n_samples)
-            The predicted values for each single tree.
-        """
-        check_is_fitted(self)
-        # Check data
-        X = self._validate_X_predict(X)
-
-        # store the output of every estimator
-        assert(self.n_outputs_ == 1)
-        pred_t = np.empty((len(self.estimators_), X.shape[0]), dtype=np.float32)
-        # Assign chunk of trees to jobs
-        n_jobs = min(self.n_estimators, self.n_jobs)
-        # Parallel loop prediction
-        lock = threading.Lock()
-        Parallel(n_jobs=n_jobs, verbose=self.verbose, require="sharedmem")(
-            delayed(_single_prediction)(self.estimators_[i].predict, X, pred_t, i, lock)
-            for i in range(len(self.estimators_))
-        )
-        return pred_t
