@@ -167,7 +167,7 @@ def rscfi(data, tgt, prop, space, output_folder, date_str, covs_all, sorted_impo
             break  # Stop if limited (<2) features are left
 
         ttprint(f'processing {threshold} ...')
-        rf = RandomForestRegressor(random_state=41, n_jobs=80)
+        rf = RandomForestRegressor(random_state=41, n_jobs=-1)
         
 
         y_pred = cross_val_predict(rf, data[current_features], data[tgt], cv=kfold, groups=groups if strata_col else None, n_jobs=-1)
@@ -291,7 +291,7 @@ def parameter_fine_tuning(cal, covs, tgt, prop, output_folder, version, strata_c
         estimator=RandomForestRegressor(),
         param_grid=param_rf,
         scoring=fitting_score,
-        n_jobs=90, 
+        n_jobs=-1, 
         cv=kfold,
         verbose=1,
         random_state = 1992
@@ -299,7 +299,7 @@ def parameter_fine_tuning(cal, covs, tgt, prop, output_folder, version, strata_c
     tune_rf.fit(cal[covs], cal[tgt], groups=groups if strata_col else None)
     warnings.filterwarnings('ignore')
     rf = tune_rf.best_estimator_
-    joblib.dump(rf, f'{output_folder}/model_rf.{prop}_ccc_v{version}.joblib')
+    joblib.dump(rf, f'{output_folder}/model_rf.{prop}.ccc_v{version}.joblib')
     models.append(rf)
     model_names.append('rf')
     
@@ -329,7 +329,7 @@ def parameter_fine_tuning(cal, covs, tgt, prop, output_folder, version, strata_c
     #     estimator=pipeline,
     #     param_grid=param_lgb,
     #     scoring=fitting_score,
-    #     n_jobs=90,
+    #     n_jobs=-1,
     #     cv=cv,
     #     verbose=1,
     #     random_state=1994
@@ -351,7 +351,7 @@ cet_l19_cmap = LinearSegmentedColormap.from_list(
 
 def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, output_folder):
     model = joblib.load(model_file)
-    model.n_jobs =90
+    model.n_jobs =-1
     model_name = model_list[iii].split('_')[-2].split('.')[0]
     covs = model.feature_names_in_
         
@@ -364,11 +364,14 @@ def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, o
             st_stg = group_strategy[ii]
             
             ttprint(f'start CV grouped by {st_col} for {model_name}')
-            if st_stg == 'gkf':
-                y_cv = cross_val_predict(model, train[covs], train[tgt], cv=GroupKFold(n_splits=5), groups=train[st_col])
-            elif st_stg == 'logo':
-                y_cv = cross_val_predict(model, train[covs], train[tgt], cv=logo.split(train[covs], train[tgt], train[st_col]))
-            elif st_stg == 'kf':
+            if st_col:
+                if st_stg == 'gkf':
+                    y_cv = cross_val_predict(model, train[covs], train[tgt], cv=GroupKFold(n_splits=5), groups=train[st_col])
+                elif st_stg == 'logo':
+                    y_cv = cross_val_predict(model, train[covs], train[tgt], cv=logo.split(train[covs], train[tgt], train[st_col]))
+                    elif st_stg == 'kf':
+                    y_cv = cross_val_predict(model, train[covs], train[tgt], cv=KFold(n_splits=5))
+            else:
                 y_cv = cross_val_predict(model, train[covs], train[tgt], cv=KFold(n_splits=5))
             ttprint(f'finish!')
             train[f'{tgt}_cv.{st_stg}.{st_col}_{model_name}'] = y_cv
