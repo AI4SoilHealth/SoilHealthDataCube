@@ -363,7 +363,7 @@ def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, o
             st_col = strata_col[ii]
             st_stg = group_strategy[ii]
             
-            ttprint(f'start CV grouped by {} for {model_name}')
+            ttprint(f'start CV grouped by {st_col} for {model_name}')
             if st_stg == 'gkf':
                 y_cv = cross_val_predict(model, train[covs], train[tgt], cv=GroupKFold(n_splits=5), groups=train[st_col])
             elif st_stg == 'logo':
