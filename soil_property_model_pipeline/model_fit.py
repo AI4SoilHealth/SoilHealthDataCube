@@ -277,10 +277,11 @@ def parameter_fine_tuning(cal, covs, tgt, prop, output_folder, version, strata_c
     fitting_score = ccc_scorer
     
     ## no weights version
+    joblib.parallel_backend('threading')
     # random forest
     ttprint('----------------------rf------------------------')
     param_rf = {
-        'n_estimators': [64],
+        'n_estimators': [60, 80, 100, 120],
         "criterion": ['squared_error'], #['squared_error', 'absolute_error', 'poisson', 'friedman_mse'],
         'max_depth': [10, 20, 30],
         'max_features': [0.3, 0.5, 0.7, 'log2', 'sqrt'],
