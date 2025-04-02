@@ -369,7 +369,7 @@ def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, o
                     y_cv = cross_val_predict(model, train[covs], train[tgt], cv=GroupKFold(n_splits=5), groups=train[st_col])
                 elif st_stg == 'logo':
                     y_cv = cross_val_predict(model, train[covs], train[tgt], cv=logo.split(train[covs], train[tgt], train[st_col]))
-                    elif st_stg == 'kf':
+                elif st_stg == 'kf':
                     y_cv = cross_val_predict(model, train[covs], train[tgt], cv=KFold(n_splits=5))
             else:
                 y_cv = cross_val_predict(model, train[covs], train[tgt], cv=KFold(n_splits=5))
