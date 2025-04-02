@@ -10,7 +10,7 @@ import warnings
 import os
 from scipy.stats import randint, uniform
 from sklearn.experimental import enable_halving_search_cv
-from sklearn.model_selection import train_test_split, HalvingGridSearchCV, KFold, GroupKFold
+from sklearn.model_selection import train_test_split, HalvingGridSearchCV, KFold, GroupKFold, LeaveOneGroupOut
 from sklearn.model_selection import RandomizedSearchCV, HalvingRandomSearchCV, cross_val_predict
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error, mean_absolute_percentage_error, median_absolute_error
 from sklearn.ensemble import RandomForestRegressor
@@ -299,7 +299,7 @@ def parameter_fine_tuning(cal, covs, tgt, prop, output_folder, version, strata_c
     tune_rf.fit(cal[covs], cal[tgt], groups=groups if strata_col else None)
     warnings.filterwarnings('ignore')
     rf = tune_rf.best_estimator_
-    joblib.dump(rf, f'{output_folder}/model_rf.{prop}.ccc_v{version}.joblib')
+    joblib.dump(rf, f'{output_folder}/model.{prop}_rf.ccc_v{version}.joblib')
     models.append(rf)
     model_names.append('rf')
     
@@ -352,7 +352,7 @@ cet_l19_cmap = LinearSegmentedColormap.from_list(
 def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, output_folder):
     model = joblib.load(model_file)
     model.n_jobs =-1
-    model_name = model_list[iii].split('_')[-2].split('.')[0]
+    model_name = model_file.split('_')[-2].split('.')[0]
     covs = model.feature_names_in_
         
     results = []
@@ -368,6 +368,7 @@ def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, o
                 if st_stg == 'gkf':
                     y_cv = cross_val_predict(model, train[covs], train[tgt], cv=GroupKFold(n_splits=5), groups=train[st_col])
                 elif st_stg == 'logo':
+                    logo = LeaveOneGroupOut()
                     y_cv = cross_val_predict(model, train[covs], train[tgt], cv=logo.split(train[covs], train[tgt], train[st_col]))
                 elif st_stg == 'kf':
                     y_cv = cross_val_predict(model, train[covs], train[tgt], cv=KFold(n_splits=5))
@@ -376,9 +377,9 @@ def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, o
             ttprint(f'finish!')
             train[f'{tgt}_cv.{st_stg}.{st_col}_{model_name}'] = y_cv
             
-            rmse, mae, medae, mape, ccc, r2, bias = accuracy_plot(test[tgt], test[f'{tgt}_test_{model_name}'], tgt, model_name, 'test', output_folder)
+            rmse, mae, medae, mape, ccc, r2, bias = accuracy_plot(train[tgt], train[f'{tgt}_cv.{st_stg}.{st_col}_{model_name}'], tgt, model_name, 'test', output_folder)
             results.append({
-                'prop':prop,
+                'prop':tgt.split('_')[0],
                 'model': model_name,
                 'evaluation_type': f'cv.{st_stg}.{st_col}',
                 'RMSE': rmse,
@@ -394,14 +395,14 @@ def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, o
     ttprint(f'start test prediction for {model_name}')
     model.fit(train[covs], train[tgt])
     y_val = model.predict(test[covs])
-    ttprint(f'finish test prediction for {model_name}')
+    ttprint(f'finish!')
     test[f'{tgt}_test_{model_name}'] = y_val
 
     rmse, mae, medae, mape, ccc, r2, bias = accuracy_plot(test[tgt], test[f'{tgt}_test_{model_name}'], tgt, model_name, 'test', output_folder)
     results.append({
-        'prop':prop,
+        'prop':tgt.split('_')[0],
         'model': model_name,
-        'evaluation_type': test_type,
+        'evaluation_type': 'hold-out test',
         'RMSE': rmse,
         'MAE': mae,
         'MedAE': medae,
@@ -415,7 +416,7 @@ def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, o
 
 def accuracy_plot(y_test, y_pred, tgt, mdl, test_type, output_folder):
     prop = tgt.split('_')[0]
-    if (tgt.split('_'))>1:
+    if len(tgt.split('_'))>1:
         space = tgt.split('_')[-1]
     else:
         space = 'normal'
