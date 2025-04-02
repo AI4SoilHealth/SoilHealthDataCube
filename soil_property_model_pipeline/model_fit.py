@@ -97,7 +97,6 @@ def calc_metrics(y_true, y_pred, space):
 def cfi_calc(data, tgt, prop, space, output_folder, date_str, covs_all):
     data = data.dropna(subset=covs_all,how='any')
     n_bootstrap=20
-    ntrees = 100
     
     runs = []
     feature_importances = []
@@ -116,7 +115,7 @@ def cfi_calc(data, tgt, prop, space, output_folder, date_str, covs_all):
         )
         
         ttprint(f'{k} iteration, training size: {len(train)}')
-        rf = RandomForestRegressor(random_state=41, n_jobs=80, n_estimators=ntrees)
+        rf = RandomForestRegressor(random_state=41, n_jobs=-1)
         rf.fit(train[covs_all], train[tgt])
         
         # impurity-based feature importance
@@ -136,7 +135,7 @@ def cfi_calc(data, tgt, prop, space, output_folder, date_str, covs_all):
     
     return sorted_importances
     
-def rscfi(data, tgt, prop, space, output_folder, date_str, covs_all, sorted_importances, threshold_num=[50,100], step_size=0.0002):
+def rscfi(data, tgt, prop, space, output_folder, date_str, covs_all, sorted_importances, threshold_num=[50,100], step_size=0.0002, strata_col = None):
     min_num, max_num = threshold_num
     max_threshold = sorted_importances['cfi'].max()
     min_threshold = sorted_importances['cfi'].min()
@@ -150,9 +149,12 @@ def rscfi(data, tgt, prop, space, output_folder, date_str, covs_all, sorted_impo
     data = data.dropna(subset=covs_all,how='any')
     
     n_splits = 5
-    ntrees = 100
-    spatial_cv_column='tile_id'
-    groups = data[spatial_cv_column].unique()
+    if strata_col is not None:
+        groups = data[strata_col].values  # Create groups for stratification
+        kfold = GroupKFold(n_splits=n_splits)  # Use GroupKFold for stratified cross-validation
+    else:
+        kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)  # Regular KFold without stratification
+
     
     for threshold in thresholds:
         current_features = sorted_importances.loc[sorted_importances['cfi'] >= threshold, 'feature'].tolist()
@@ -165,11 +167,10 @@ def rscfi(data, tgt, prop, space, output_folder, date_str, covs_all, sorted_impo
             break  # Stop if limited (<2) features are left
 
         ttprint(f'processing {threshold} ...')
-        rf = RandomForestRegressor(random_state=41, n_jobs=80, n_estimators=ntrees)
-        group_kfold = GroupKFold(n_splits=n_splits)
+        rf = RandomForestRegressor(random_state=41, n_jobs=80)
+        
 
-        groups = data[spatial_cv_column].values
-        y_pred = cross_val_predict(rf, data[current_features], data[tgt], cv=group_kfold, groups=groups, n_jobs=-1)
+        y_pred = cross_val_predict(rf, data[current_features], data[tgt], cv=kfold, groups=groups if strata_col else None, n_jobs=-1)
         y_true = data[tgt]
 
         metrics = calc_metrics(y_true, y_pred, space)
