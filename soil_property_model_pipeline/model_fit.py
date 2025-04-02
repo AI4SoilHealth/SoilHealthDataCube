@@ -260,14 +260,19 @@ def rscfi(data, tgt, prop, space, output_folder, date_str, covs_all, sorted_impo
     return covs
 
     
-def parameter_fine_tuning(cal, covs, tgt, prop, output_folder, version):
+def parameter_fine_tuning(cal, covs, tgt, prop, output_folder, version, strata_col):
     models = [] #[rf, ann, lgb, rf_weighted, lgb_weighted] #cubist, cubist_weighted, 
     model_names = [] #['rf', 'ann', 'lgb', 'rf_weighted', 'lgb_weighted'] # 'cubist',, 'cubist_weighted'
     cal = cal.dropna(subset=covs,how='any')
 
     ### parameter fine tuning
-    spatial_cv_column = 'tile_id'
-    cv = GroupKFold(n_splits=5)
+    n_splits = 5
+    if strata_col is not None:
+        groups = data[strata_col].values  # Create groups for stratification
+        kfold = GroupKFold(n_splits=n_splits)  # Use GroupKFold for stratified cross-validation
+    else:
+        kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)  # Regular KFold without stratification
+        
     ccc_scorer = make_scorer(calc_ccc, greater_is_better=True)
     fitting_score = ccc_scorer
     
@@ -287,11 +292,11 @@ def parameter_fine_tuning(cal, covs, tgt, prop, output_folder, version):
         param_grid=param_rf,
         scoring=fitting_score,
         n_jobs=90, 
-        cv=cv,
+        cv=kfold,
         verbose=1,
         random_state = 1992
     )
-    tune_rf.fit(cal[covs], cal[tgt], groups=cal[spatial_cv_column])
+    tune_rf.fit(cal[covs], cal[tgt], groups=groups if strata_col else None)
     warnings.filterwarnings('ignore')
     rf = tune_rf.best_estimator_
     joblib.dump(rf, f'{output_folder}/model_rf.{prop}_ccc_v{version}.joblib')
