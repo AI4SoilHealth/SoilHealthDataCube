@@ -344,7 +344,74 @@ cet_l19_cmap = LinearSegmentedColormap.from_list(
     "CET-L19", ["#abdda4", "#ffffbf", "#fdae61", "#d7191c"]
 )
 
-def accuracy_plot(y_test, y_pred, prop, space, mdl, test_type, output_folder):
+def model_evaluation(model_file, tgt, train, test, strata_col, group_strategy, output_folder):
+    model = joblib.load(model_file)
+    model.n_jobs =90
+    model_name = model_list[iii].split('_')[-2].split('.')[0]
+    covs = model.feature_names_in_
+        
+    results = []
+
+    # cross validation------------------------------------------------------------
+    if strata_col:
+        for ii in range(len(strata_col)):
+            st_col = strata_col[ii]
+            st_stg = group_strategy[ii]
+            
+            ttprint(f'start CV grouped by {} for {model_name}')
+            if st_stg == 'gkf':
+                y_cv = cross_val_predict(model, train[covs], train[tgt], cv=GroupKFold(n_splits=5), groups=train[st_col])
+            elif st_stg == 'logo':
+                y_cv = cross_val_predict(model, train[covs], train[tgt], cv=logo.split(train[covs], train[tgt], train[st_col]))
+            elif st_stg == 'kf':
+                y_cv = cross_val_predict(model, train[covs], train[tgt], cv=KFold(n_splits=5))
+            ttprint(f'finish!')
+            train[f'{tgt}_cv.{st_stg}.{st_col}_{model_name}'] = y_cv
+            
+            rmse, mae, medae, mape, ccc, r2, bias = accuracy_plot(test[tgt], test[f'{tgt}_test_{model_name}'], tgt, model_name, 'test', output_folder)
+            results.append({
+                'prop':prop,
+                'model': model_name,
+                'evaluation_type': f'cv.{st_stg}.{st_col}',
+                'RMSE': rmse,
+                'MAE': mae,
+                'MedAE': medae,
+                'MAPE': mape,
+                'R2': r2,
+                'CCC': ccc,
+                'bias': bias
+            })
+
+    # test---------------------------------------------------------------------------
+    ttprint(f'start test prediction for {model_name}')
+    model.fit(train[covs], train[tgt])
+    y_val = model.predict(test[covs])
+    ttprint(f'finish test prediction for {model_name}')
+    test[f'{tgt}_test_{model_name}'] = y_val
+
+    rmse, mae, medae, mape, ccc, r2, bias = accuracy_plot(test[tgt], test[f'{tgt}_test_{model_name}'], tgt, model_name, 'test', output_folder)
+    results.append({
+        'prop':prop,
+        'model': model_name,
+        'evaluation_type': test_type,
+        'RMSE': rmse,
+        'MAE': mae,
+        'MedAE': medae,
+        'MAPE': mape,
+        'R2': r2,
+        'CCC': ccc,
+        'bias': bias
+    })
+    
+    return pd.DataFrame(results)
+
+def accuracy_plot(y_test, y_pred, tgt, mdl, test_type, output_folder):
+    prop = tgt.split('_')[0]
+    if (tgt.split('_'))>1:
+        space = tgt.split('_')[-1]
+    else:
+        space = 'normal'
+        
     rmse, mae, medae, mape, ccc, r2, bias = calc_metrics(y_test, y_pred, space)
     
     show_range = [
@@ -355,12 +422,12 @@ def accuracy_plot(y_test, y_pred, prop, space, mdl, test_type, output_folder):
     plt.rcParams.update({'font.size': 16})
     fig, ax = plt.subplots(figsize=(8, 7))
     
-    ax.set_title(f'{test_type} of {mdl} in {space} scale using {len(y_test)} data\nRMSE={rmse:.2f}, CCC={ccc:.2f}, bias={bias:.2f}')
+    ax.set_title(f'{mdl}, {test_type}, using {len(y_test)} data\nRMSE={rmse:.2f}, CCC={ccc:.2f}, bias={bias:.2f}')
     
     # Use the CET-L19 colorblind-friendly colormap
     hb = ax.hexbin(y_pred, y_test, gridsize=(20, 20), cmap=cet_l19_cmap, mincnt=2, vmax=vmax, bins='log')
-    ax.set_xlabel(f'Predicted {prop}')
-    ax.set_ylabel(f'Observed {prop}')
+    ax.set_xlabel(f'Predicted {tgt}')
+    ax.set_ylabel(f'Observed {tgt}')
     ax.set_aspect('auto', adjustable='box')
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -372,7 +439,7 @@ def accuracy_plot(y_test, y_pred, prop, space, mdl, test_type, output_folder):
     cb.set_label('Count')
     
     plt.tight_layout(rect=[0, 0, 0.92, 1])  # Adjust the right margin to make room for colorbar
-    plt.savefig(f'{output_folder}/plot_accuracy.{test_type}_{mdl}.{prop}.pdf', format='pdf', bbox_inches='tight', dpi=300)
+    plt.savefig(f'{output_folder}/plot_accuracy.{tgt}_{mdl}.{test_type}.pdf', format='pdf', bbox_inches='tight', dpi=300)
     return rmse, mae, medae, mape, ccc, r2, bias
 
 def accuracy_strata_plot(metric, strata_df, prop, mdl):
