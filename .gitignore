@@ -1,3 +1,11 @@
+# intermediate temporary results
+/data
+/figure
+/metrics
+/soil_property_model_pipeline
+/src
+/landsat_based_spectral_indices/src
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

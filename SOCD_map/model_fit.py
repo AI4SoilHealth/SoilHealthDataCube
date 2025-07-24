@@ -66,6 +66,28 @@ def weighted_ccc(y_true, y_pred, weights=None):
     ccc = (2 * cov) / (var_true + var_pred + (mean_true - mean_pred) ** 2)
     return ccc
 
+def calc_ccc(y_true, y_pred):
+    if len(y_true) <= 1 or len(y_pred) <= 1:
+        return np.nan  # Return NaN if there is insufficient data
+
+    mean_true = np.mean(y_true)
+    mean_pred = np.mean(y_pred)
+    
+    try:
+        cov_matrix = np.cov(y_true, y_pred)
+        covariance = cov_matrix[0, 1]
+        var_true = cov_matrix[0, 0]
+        var_pred = cov_matrix[1, 1]
+    except Warning:
+        warnings.warn("Covariance calculation encountered an issue.")
+        return np.nan  # Return NaN if covariance calculation fails
+
+    if var_true + var_pred + (mean_true - mean_pred) ** 2 == 0:
+        return np.nan  # Avoid division by zero
+
+    ccc = (2 * covariance) / (var_true + var_pred + (mean_true - mean_pred) ** 2)
+    return ccc
+
 def calc_metrics(y_true, y_pred, weights=None, space='normal'):
     if space == 'normal':
         mae = weighted_mae(y_true, y_pred, weights)
@@ -78,8 +100,7 @@ def calc_metrics(y_true, y_pred, weights=None, space='normal'):
         ccc = weighted_ccc(y_true, y_pred, weights)
         r2 = r2_score(y_true, y_pred, sample_weight=weights)
         
-        y_true = np.expm1(y_true)
-        y_pred = np.expm1(y_pred)
+        
         mae = weighted_mae(y_true, y_pred, weights)
         medae = weighted_medae(y_true, y_pred, weights)
         mape = weighted_mape(y_true, y_pred, weights)
@@ -107,7 +128,7 @@ warnings.filterwarnings("ignore", category=RuntimeWarning, message="invalid valu
 
 
 
-def cfi_calc(data, tgt, prop, space, output_folder, covs_all, weights_feature=None):
+def cfi_calc(data, tgt, prop, space, output_folder, covs_all, version, weights_feature=None):
     data = data.dropna(subset=covs_all,how='any')
     n_bootstrap=20
     ntrees = 100
@@ -143,7 +164,7 @@ def cfi_calc(data, tgt, prop, space, output_folder, covs_all, weights_feature=No
     sorted_importances = result.mean(axis=0).sort_values(ascending=False)
     sorted_importances = sorted_importances.reset_index()
     sorted_importances.columns = ['Feature Name', 'Mean Cumulative Feature Importance']
-    sorted_importances.to_csv(f'{output_folder}/cumulative.feature.importance_{prop}.csv',index=False)
+    sorted_importances.to_csv(f'{output_folder}/cumulative.feature.importance_{prop}_v{version}.csv',index=False)
     
     return sorted_importances
     
