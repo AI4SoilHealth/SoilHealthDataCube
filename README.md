@@ -13,7 +13,7 @@ For detailed technical information, see the **[Soil Health Data Cube for Europe 
 
 ## Repository Contents
 
-### 1. [paneu_landmask]
+### 1. [paneu_landmask](/paneu_landmask)
 
 This folder contains files used to produce three Pan-EU land masks:
 
@@ -36,7 +36,7 @@ This landmask serves as a **reference for landmask, spatial content, and resolut
 
 ---
 
-### 2. [landsat_based_spectral_indices]
+### 2. [landsat_based_spectral_indices](/landsat_based_spectral_indices)
 
 A time-series of Landsat-based spectral indices (2000–2022) for continental Europe (including Ukraine, the UK, and Turkey).
 
@@ -72,7 +72,7 @@ Bare Soil Fraction (%) time series for Europe (2000–2022):
 
 ---
 
-### 3. [SOCD_map]
+### 3. [SOCD_map](/SOCD_map)
 
 Contains notebooks and scripts for predictive modeling of **soil organic carbon density (SOCD):**
 
@@ -88,7 +88,7 @@ Tian, X., de Bruin, S., Simoes, R., Isik, M.S., Minarik, R., Ho, Y., Şahin, M.,
 
 ---
 
-### 4. [soil_property_model_pipeline]
+### 4. [soil_property_model_pipeline](/soil_property_model_pipeline)
 
 Implements the tested pipeline from **SOCD_map** to predict **10 key soil properties**, with the resulting maps available at [https://ecodatacube.eu](https://ecodatacube.eu).
 
